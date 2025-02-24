@@ -1,0 +1,6 @@
+@Web_HostAddress = http://localhost:5041
+
+POST {{Web_HostAddress}}/api/Order/
+Accept: application/json
+
+###
