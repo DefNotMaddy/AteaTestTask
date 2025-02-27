@@ -7,8 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Fluxera.Extensions.DependencyInjection" Version="9.0.3" />
+    <PackageReference Include="Fluxera.Extensions.DependencyInjection.Abstractions" Version="9.0.3" />
     <PackageReference Include="MediatR" Version="12.4.1" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="7.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="7.3.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.6.0" />
   </ItemGroup>
 
 </Project>

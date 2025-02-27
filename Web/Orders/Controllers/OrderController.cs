@@ -2,14 +2,19 @@
 using Core.Dtos.Orders;
 using Web.Orders.Mediators.Queries;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Web.Orders.Controllers
 {
     [ApiController]
+    [Authorize]
+    [ProducesResponseType(typeof(OrderResponse), 200)]  // OK response
+    [ProducesResponseType(typeof(UnauthorizedResult), 401)]  // Unauthorized response
+    [ProducesResponseType(typeof(string), 400)]  // Bad Request response
     [Route("api/[controller]")]
     public class OrderController(ILogger<OrderController> logger, IMediator mediator) : ControllerBase
     {
-        [HttpPost("Order")]
+        [HttpPost]
         public async Task<IActionResult> ProcessOrder([FromBody] OrderRequest orderRequest)
         {
             logger.LogInformation($"Processing {orderRequest}");
@@ -24,8 +29,8 @@ namespace Web.Orders.Controllers
             var result = await mediator.Send(request, default);
 
             return result is not null ?
-                Ok(result) : 
-                NoContent();
+                Ok(result) 
+                : NoContent();
         }
     }
 }

@@ -1,8 +1,8 @@
-using FluentValidation;
-using FluentValidation.AspNetCore;
+using Core.Extensions;
+using Core.Types.ConfigurationTypes;
 using System.Reflection;
 using Web.Infrastructure.Extensions;
-using Web.Orders.Mediators.Validators;
+
 
 namespace Web
 {
@@ -12,9 +12,13 @@ namespace Web
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container (this replaces ConfigureServices in Startup.cs)
-            builder.Services.AddControllers();
-            builder.Services.AddSwaggerGen();  // Example of adding Swagger
+            builder.Configuration.AddJsonFile(
+                "appsettings.json",
+                optional: false,
+                reloadOnChange: true);
+            builder.Services.AddJwtAuth(builder.Configuration.GetSection<JwtOptions>(JwtOptions.Section));
+
+            builder.Services.AddSingleton(builder.Configuration.GetSection<JwtOptions>(JwtOptions.Section));
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -27,23 +31,26 @@ namespace Web
             });
 
             builder.Services.AddOrderServices();
+            var sectionA = builder.Configuration.GetSection<SectionAOptions>(SectionAOptions.Section);
 
-            var app = builder.Build();
-
-            // Configure the HTTP request pipeline (this replaces Configure in Startup.cs)
+            var app = builder.Build().InitWebApp();
+            app.Run();
+        }
+        private static WebApplication InitWebApp(this WebApplication app)
+        {
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-
             app.UseHttpsRedirection();
+            app.UseAuthentication();
             app.UseAuthorization();
+            app.UseSwaggerUI();
+
             app.MapControllers();
-
-            app.Run();
-
-
+            // If there are calls to app.UseRouting() and app.UseEndpoints(...), the call to app.UseAuthorization() must go between them.
+            return app;
         }
     }
 }
