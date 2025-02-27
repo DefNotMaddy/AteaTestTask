@@ -1,4 +1,6 @@
-﻿namespace Web.Infrastructure.Extensions
+﻿using Microsoft.Extensions.Configuration;
+
+namespace Core.Extensions
 {
     public static class ConfigurationExtensions
     {

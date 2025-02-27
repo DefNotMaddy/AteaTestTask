@@ -1,4 +1,6 @@
-﻿using Core.Types.ConfigurationTypes;
+﻿using Core.Dtos.Orders;
+using Core.Dtos.Responses;
+using Core.Types.ConfigurationTypes;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,6 +14,7 @@ namespace Web.Jwt.Controllers
 {
     [ApiController]
     [AllowAnonymous]
+    [ProducesResponseType(typeof(JwtTokenDto), 200)]  // OK response
     [Route("api/[controller]")]
     public class JwtController(ILogger<OrderController> logger, IMediator mediator, JwtOptions jwtOptions) : ControllerBase
     {
@@ -35,8 +38,7 @@ namespace Web.Jwt.Controllers
                 signingCredentials: credentials
             );
             logger.LogInformation($"Token has been genereated, and it's beeing sent back.");
-            var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
-            return Ok(new { token = tokenString });
+            return Ok(new JwtTokenDto(new JwtSecurityTokenHandler().WriteToken(token)));
         }
 
     }

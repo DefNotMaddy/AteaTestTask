@@ -1,5 +1,6 @@
 using Core.Extensions;
 using Core.Types.ConfigurationTypes;
+using System;
 using System.Reflection;
 using Web.Infrastructure.Extensions;
 
@@ -12,11 +13,19 @@ namespace Web
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            builder.Configuration.AddJsonFile(
-                "appsettings.json",
-                optional: false,
-                reloadOnChange: true);
-            builder.Services.AddJwtAuth(builder.Configuration.GetSection<JwtOptions>(JwtOptions.Section));
+            var environment = builder.Environment;
+            builder.Configuration
+                .AddJsonFile(
+                    "appsettings.json",
+                    optional: false,
+                    reloadOnChange: true)
+                .AddJsonFile(
+                    $"appsettings.{environment.EnvironmentName}.json",
+                    optional: true,
+                    reloadOnChange: true)
+                .AddEnvironmentVariables();
+
+            builder.Services.AddJwtAuth(builder.Configuration);
 
             builder.Services.AddSingleton(builder.Configuration.GetSection<JwtOptions>(JwtOptions.Section));
 
